@@ -37,9 +37,11 @@ order by user_id ;
 Calculate each user's average session time. A session is defined as the time difference between a page_load and page_exit. For simplicity, assume a user has only 1 session per day and if there are multiple of the same events on that day, consider only the latest page_load and earliest page_exit. Output the user_id and their average session time.
 
 Table: facebook_web_log
+```
 user_id:int
 timestamp:datetime
 action:varchar
+```
 
 ### MY SOLUTION
 ```SQL
@@ -64,6 +66,7 @@ Rank guests based on the number of messages they've exchanged with the hosts. Gu
 Output the rank, guest id, and number of total messages they've sent. Order by the highest number of total messages first.
 
 Table: airbnb_contacts
+```
 id_guest:varchar
 id_host:varchar
 id_listing:varchar
@@ -75,6 +78,7 @@ ds_checkin:varchar
 ds_checkout:varchar
 n_guests:int
 n_messages:int
+```
 
 ### MY SOLUTION
 ```SQL
@@ -88,6 +92,79 @@ group by id_guest
 
 select dense_rank() over(order by sum_n_messages desc) ranking, *
 from cte ;
+```
+
+### QUESTION - Income by Title and Gender
+Find the average total compensation based on employee titles and gender. Total compensation is calculated by adding both the salary and bonus of each employee. However, not every employee receives a bonus so disregard employees without bonuses in your calculation. Employee can receive more than one bonus.
+Output the employee title, gender (i.e., sex), along with the average total compensation.
+
+Tables: sf_employee, sf_bonus
+```
+id:int
+first_name:varchar
+last_name:varchar
+age:int
+sex:varchar
+employee_title:varchar
+department:varchar
+salary:int
+target:int
+email:varchar
+city:varchar
+address:varchar
+manager_id:int
+
+worker_ref_id:int
+bonus:int
+```
+
+### MY SOLUTION
+```SQL
+with cte as (
+select
+    employee_title,
+    sex,
+    salary + bonus as 'total_comp'
+from sf_employee e
+join (select worker_ref_id, sum(bonus) as 'bonus'
+from sf_bonus
+group by worker_ref_id) as bon
+on e.id = bon.worker_ref_id
+)
+select 
+    employee_title,
+    sex,
+    avg(total_comp) as 'avg_compensation'
+from cte
+group by employee_title, sex;
+```
+
+### QUESTION - Find matching hosts and guests based off gender and nationality
+Find matching hosts and guests pairs in a way that they are both of the same gender and nationality.
+Output the host id and the guest id of matched pair.
+
+Tables: airbnb_hosts, airbnb_guests
+```
+host_id:int
+nationality:varchar
+gender:varchar
+age:int
+
+guest_id:int
+nationality:varchar
+gender:varchar
+age:int
+```
+
+### MY SOLUTION
+```SQL
+select distinct
+    host_id,
+    guest_id
+from airbnb_hosts h
+join airbnb_guests g
+on h.gender = g.gender
+and h.nationality = g.nationality ;
 ```
 
 ## EASY
