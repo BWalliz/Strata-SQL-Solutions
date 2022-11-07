@@ -167,6 +167,90 @@ on h.gender = g.gender
 and h.nationality = g.nationality ;
 ```
 
+### QUESTION - Find the top 10 ranked songs in 2010
+What were the top 10 ranked songs in 2010?
+Output the rank, group name, and song name but do not show the same song twice.
+Sort the result based on the year_rank in ascending order.
+
+Table: billboard_top_100_year_end
+```
+year:int
+year_rank:int
+group_name:varchar
+artist:varchar
+song_name:varchar
+id:int
+```
+
+### MY SOLUTION
+```SQL
+select distinct top 10
+    year_rank as 'rank',
+    group_name,
+    song_name
+from billboard_top_100_year_end
+where year = 2010 ;
+```
+
+### QUESTION - Number of Units per Nationality
+Find the number of apartments per nationality that are owned by people under 30 years old.
+Output the nationality along with the number of apartments.
+Sort records by the apartments count in descending order.
+
+Tables: airbnb_hosts, airbnb_units
+```
+host_id:int
+nationality:varchar
+gender:varchar
+age:int
+
+host_id:int
+unit_id:varchar
+unit_type:varchar
+n_beds:int
+n_bedrooms:int
+country:varchar
+city:varchar
+```
+
+### MY SOLUTION
+```SQL
+select distinct
+    nationality,
+    count(distinct unit_id) as 'apartment_count'
+from airbnb_hosts h
+join airbnb_units u
+on h.host_id = u.host_id
+where h.age < 30 and unit_type like 'Apartment'
+group by nationality ;
+```
+
+### QUESTION - Top Cool Votes
+Find the review_text that received the highest number of  'cool' votes.
+Output the business name along with the review text with the highest numbef of 'cool' votes.
+
+Table: yelp_reviews
+```
+business_name:varchar
+review_id:varchar
+user_id:varchar
+stars:varchar
+review_date:datetime
+review_text:varchar
+funny:int
+useful:int
+cool:int
+```
+
+### MY SOLUTION
+```SQL
+select
+    business_name,
+    review_text
+from yelp_reviews
+where cool = (select max(cool) as max_cool_votes from yelp_reviews) ;
+```
+
 ## EASY
 
 ### QUESTION - Bikes Last Used 
