@@ -156,6 +156,48 @@ gender:varchar
 age:int
 ```
 
+### QUESTION - Highest Cost Orders
+Find the customer with the highest daily total order cost between 2019-02-01 to 2019-05-01. If customer had more than one order on a certain day, sum the order costs on daily basis. Output customer's first name, total cost of their items, and the date.
+
+
+For simplicity, you can assume that every first name in the dataset is unique.
+
+Tables: customers, orders
+```
+id:int
+first_name:varchar
+last_name:varchar
+city:varchar
+address:varchar
+phone_number:varchar
+
+id:int
+cust_id:int
+order_date:datetime
+order_details:varchar
+total_order_cost:int
+```
+
+### MY SOLUTION
+```SQL
+select top 1
+    first_name,
+    total_order_cost,
+    order_date
+from 
+(
+select
+    c.first_name,
+    o.order_date,
+    sum(total_order_cost) as 'total_order_cost'
+from orders o
+join customers c
+on c.id = o.cust_id
+group by c.first_name, o.order_date
+) as a
+order by total_order_cost desc ;
+```
+
 ### MY SOLUTION
 ```SQL
 select distinct
@@ -249,6 +291,38 @@ select
     review_text
 from yelp_reviews
 where cool = (select max(cool) as max_cool_votes from yelp_reviews) ;
+```
+
+### QUESTION - Highest Salary in Department
+Find the employee with the highest salary per department.
+Output the department name, employee's first name along with the corresponding salary.
+
+Table: employee
+```
+id:int
+first_name:varchar
+last_name:varchar
+age:int
+sex:varchar
+employee_title:varchar
+department:varchar
+salary:int
+target:int
+bonus:int
+email:varchar
+city:varchar
+address:varchar
+manager_id:int
+```
+
+### MY SOLUTION
+```SQL
+select department, first_name, salary
+from (
+    select e.*,
+    row_number() over (partition by department order by salary desc) as newcol
+    from employee e) x
+    where x.newcol = 1 ;
 ```
 
 ## EASY
