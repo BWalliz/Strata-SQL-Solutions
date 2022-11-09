@@ -325,7 +325,95 @@ from (
     where x.newcol = 1 ;
 ```
 
+### QUESTION - Top Ranked Songs
+Find songs that have ranked in the top position. Output the track name and the number of times it ranked at the top. Sort your records by the number of times the song was in the top position in descending order.
+
+Table: spotify_worldwide_daily_song_ranking
+```
+id:int
+position:int
+trackname:varchar
+artist:varchar
+streams:int
+url:varchar
+date:datetime
+region:varchar
+```
+
+### MY SOLUTION
+```SQL
+select
+    trackname,
+    count(trackname) as 'count'
+from spotify_worldwide_daily_song_ranking
+where position = 1
+group by trackname
+order by count desc
+```
+
 ## EASY
+
+### QUESTION - Average Salaries
+Compare each employee's salary with the average salary of the corresponding department.
+Output the department, first name, and salary of employees along with the average salary of that department.
+
+Table: employee
+```
+id:int
+first_name:varchar
+last_name:varchar
+age:int
+sex:varchar
+employee_title:varchar
+department:varchar
+salary:int
+target:int
+bonus:int
+email:varchar
+city:varchar
+address:varchar
+manager_id:int
+```
+
+### MY SOLUTION
+```SQL
+select
+    department,
+    first_name,
+    salary,
+    avg(cast(salary as float)) over (partition by department) as avg_salary
+from employee ; 
+```
+
+### QUESTION - Popularity of Hack
+Meta/Facebook has developed a new programing language called Hack.To measure the popularity of Hack they ran a survey with their employees. The survey included data on previous programing familiarity as well as the number of years of experience, age, gender and most importantly satisfaction with Hack. Due to an error location data was not collected, but your supervisor demands a report showing average popularity of Hack by office location. Luckily the user IDs of employees completing the surveys were stored.
+Based on the above, find the average popularity of the Hack per office location.
+Output the location along with the average popularity.
+
+Tables: facebook_employees, facebook_hack_survey
+```
+id:int
+location:varchar
+age:int
+gender:varchar
+is_senior:bool
+
+employee_id:int
+age:int
+gender:varchar
+popularity:int
+```
+
+### MY SOLUTION
+```SQL
+select
+    location,
+    avg(cast(popularity as float)) as 'avg_popularity'
+from facebook_employees fbe
+join facebook_hack_survey fhs
+on fbe.id = fhs.employee_id
+group by location ;
+```
 
 ### QUESTION - Bikes Last Used 
 Find the last time each bike was in use. Output both the bike number and the date-timestamp of the bike's last use (i.e., the date-time the bike was returned). Order the results by bikes that were most recently used.
