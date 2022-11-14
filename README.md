@@ -80,6 +80,44 @@ n_guests:int
 n_messages:int
 ```
 
+### QUESTION - Classify Business Type
+Classify each business as either a restaurant, cafe, school, or other. A restaurant should have the word 'restaurant' in the business name. For cafes, either 'cafe', 'café', or 'coffee' can be in the business name. 'School' should be in the business name for schools. All other businesses should be classified as 'other'. Output the business name and the calculated classification.
+
+Table: sf_restaurant_health_violations
+```
+business_id:int
+business_name:varchar
+business_address:varchar
+business_city:varchar
+business_state:varchar
+business_postal_code:float
+business_latitude:float
+business_longitude:float
+business_location:varchar
+business_phone_number:float
+inspection_id:varchar
+inspection_date:datetime
+inspection_score:float
+inspection_type:varchar
+violation_id:varchar
+violation_description:varchar
+risk_category:varchar
+```
+
+### MY SOLUTION
+```SQL
+select distinct
+    business_name,
+    case when business_name like '%restaurant%' then 'restaurant'
+    when business_name like '%cafe%' then 'cafe'
+    when business_name like '%café%' then 'cafe'
+    when business_name like '%coffee%' then 'cafe'
+    when business_name like '%School%' then 'school'
+    else 'other'
+    end as business_type
+from sf_restaurant_health_violations ;
+```
+
 ### MY SOLUTION
 ```SQL
 with cte as (
@@ -413,6 +451,42 @@ from facebook_employees fbe
 join facebook_hack_survey fhs
 on fbe.id = fhs.employee_id
 group by location ;
+```
+
+### QUESTION - Number of Bathrooms and Bedrooms
+Find the average number of bathrooms and bedrooms for each city’s property types. Output the result along with the city name and the property type.
+
+Table: airbnb_search_details
+id:int
+price:float
+property_type:varchar
+room_type:varchar
+amenities:varchar
+accommodates:int
+bathrooms:int
+bed_type:varchar
+cancellation_policy:varchar
+cleaning_fee:bool
+city:varchar
+host_identity_verified:varchar
+host_response_rate:varchar
+host_since:datetime
+neighbourhood:varchar
+number_of_reviews:int
+review_scores_rating:float
+zipcode:int
+bedrooms:int
+beds:int
+
+### MY SOLUTION
+```SQL
+select
+    city,
+    property_type,
+    avg(cast(bathrooms as float)) as 'n_bathrooms_avg',
+    avg(cast(bedrooms as float)) as 'n_bedrooms_avg'
+from airbnb_search_details
+group by city, property_type
 ```
 
 ### QUESTION - Bikes Last Used 
